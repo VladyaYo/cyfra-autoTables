@@ -3,5 +3,7 @@
 .idea
 data/*
 export_data/*
+!data/.gitkeep
+!export_data/.gitkeep
 __pycache__
 .DS_Store
