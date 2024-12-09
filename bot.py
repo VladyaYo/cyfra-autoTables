@@ -1,6 +1,4 @@
 import os
-
-
 from dotenv import load_dotenv
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
@@ -28,21 +26,17 @@ REQUIRED_FILES = ["ads_data.csv", "ga_original_data.csv", "client_data.csv"]
 # Хранилище для файлов сессии
 user_files = {}
 
-async def send_welcome_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    keyboard = [['/start', '/cancel']]  # Кнопки
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)  # Уменьшаем размер клавиатуры
-    await update.message.reply_text(
-        "Выберите команду:",
-        reply_markup=reply_markup,
-    )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [['/start', '/cancel']]  # Клавиатура с кнопками
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)  # Уменьшенный размер
     await update.message.reply_text(
         "Привет! Отправь мне три CSV-файла с точными названиями:\n"
         "- ads_data.csv\n"
         "- ga_original_data.csv\n"
         "- client_data.csv\n"
-        "Чтобы сбросить процесс загрузки, используйте команду /cancel."
+        "Чтобы сбросить процесс загрузки, используйте команду /cancel.",
+        reply_markup=reply_markup
     )
 
 
@@ -63,7 +57,7 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Сохраняем файл
     file = await update.message.document.get_file()
-    file_path = os.path.join(DATA_FOLDER, file_name)  # Сохраняем напрямую в папку "data"
+    file_path = os.path.join(DATA_FOLDER, file_name)
     await file.download_to_drive(file_path)
     user_files[user_id][file_name] = file_path
 
@@ -95,8 +89,13 @@ async def run_processing(files, update, context):
         ga_original_data = files["ga_original_data.csv"]
         client_data = files["client_data.csv"]
 
-        # Запуск асинхронного main с передачей файлов как аргументы
-        await main(ads_data, ga_original_data, client_data)
+        # Установка переменных окружения для main
+        os.environ["ADS_DATA"] = ads_data
+        os.environ["GA_ORIGINAL_DATA"] = ga_original_data
+        os.environ["CLIENT_DATA"] = client_data
+
+        # Запуск вашей программы
+        await main()
 
         result_file = os.path.join(EXPORT_FOLDER, "final.csv")  # Итоговый файл
         await context.bot.send_document(chat_id=update.effective_chat.id, document=open(result_file, "rb"))

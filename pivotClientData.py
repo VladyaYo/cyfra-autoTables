@@ -35,30 +35,30 @@ def pivot_client_data():
     # Чтение таблиц
     df1 = pd.read_csv("data/client_data.csv")  # Первая таблица
    ##
-    # ga_table_path = "data/ga_original_data.csv"
-    # indicator = "Джерело"
-    #
-    # # Чтение файла без указания заголовков
-    # input_df = pd.read_csv(ga_table_path, header=None, encoding='utf-8')
-    #
-    # # Поиск строки с индикатором
-    # start_row = input_df.apply(lambda row: row.astype(str).str.contains(indicator).any(), axis=1).idxmax()
+    ga_table_path = "data/ga_original_data.csv"
+    indicator = "Джерело"
+
+    # Чтение файла без указания заголовков
+    input_df = pd.read_csv(ga_table_path, header=None, encoding='utf-8')
+
+    # Поиск строки с индикатором
+    start_row = input_df.apply(lambda row: row.astype(str).str.contains(indicator).any(), axis=1).idxmax()
 
     # Чтение данных начиная с найденной строки
-    # df2 = pd.read_csv(ga_table_path, skiprows=start_row, encoding='utf-8')
+    df2 = pd.read_csv(ga_table_path, skiprows=start_row, encoding='utf-8')
     ##
 
-    # df2 = pd.read_csv("data/ga_original_data.csv", skiprows=9)
-    file_path_ga = "data/ga_original_data.csv"
-
-    # Шаг 1: Найти первую строку с более чем 10 колонками
-    with open(file_path_ga, "r", encoding="utf-8") as file:
-        for i, line in enumerate(file):
-            if len(line.split(",")) > 3:  # Предполагаем, что разделитель - запятая
-                header_row = i
-                break
-
-    df2 = pd.read_csv(file_path_ga, skiprows=header_row)
+    # df2 = pd.read_csv("data/ga_original_data.csv", skiprows=6)
+    # file_path_ga = "data/ga_original_data.csv"
+    #
+    # # Шаг 1: Найти первую строку с более чем 10 колонками
+    # with open(file_path_ga, "r", encoding="utf-8") as file:
+    #     for i, line in enumerate(file):
+    #         if len(line.split(",")) > 2:  # Предполагаем, что разделитель - запятая
+    #             header_row = i
+    #             break
+    #
+    # df2 = pd.read_csv(file_path_ga, skiprows=header_row)
 
     # Фильтруем данные за 9-й месяц в первой таблице
     # df1_filtered = df1[df1["Месяц отгрузки заказа"] == 9]  # Здесь "месяц" — колонка в первой таблице
