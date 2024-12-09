@@ -21,7 +21,7 @@ EXPORT_FOLDER = "export_data/"
 os.makedirs(EXPORT_FOLDER, exist_ok=True)
 
 # Требуемые файлы
-REQUIRED_FILES = ["ads_data.csv", "ga_original_data.csv", "client_data.xlsx"]
+REQUIRED_FILES = ["ads_data.csv", "ga_original_data.csv", "client_data.csv"]
 
 # Хранилище для файлов сессии
 user_files = {}
@@ -87,7 +87,7 @@ async def run_processing(files, update, context):
         # Получаем пути к файлам из переданных данных
         ads_data = files["ads_data.csv"]
         ga_original_data = files["ga_original_data.csv"]
-        client_data = files["client_data.xlsx"]
+        client_data = files["client_data.csv"]
 
         # Установка переменных окружения для main
         os.environ["ADS_DATA"] = ads_data

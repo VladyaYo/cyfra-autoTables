@@ -2,13 +2,13 @@ import pandas as pd
 
 def pivot_client_data():
     # Чтение данных из файла CSV
-    # file_path = "data/client_data.xlsx"
-    # df = pd.read_csv(file_path)
     file_path = "data/client_data.xlsx"
-    df = pd.read_excel(file_path, engine='openpyxl')
+    df = pd.read_csv(file_path)
+    # file_path = "data/client_data.xlsx"
+    # df = pd.read_excel(file_path, engine='openpyxl')
 
     # Обработка колонки с числами (например, "Цена ГРН", "Закупка ГРН", "Сумма грн")
-    columns_to_clean = ["Цена ГРН", "Закупка ГРН", "Сумма грн"]  # Замените на ваши названия колонок
+    columns_to_clean = ["Цена ГРН", "Закупка ГРН", "Сумма грн"]
 
     for col in columns_to_clean:
         # Удаляем лишние символы и преобразуем в числовой формат
@@ -35,9 +35,9 @@ def pivot_client_data():
 
     # добавление колонки "источник"
     # Чтение таблиц
-    # df1 = pd.read_csv("data/client_data.csv")  # Первая таблица
+    df1 = pd.read_csv("data/client_data.csv")  # Первая таблица
    ##
-    df1 = pd.read_excel(file_path, engine='openpyxl')
+    # df1 = pd.read_excel(file_path, engine='openpyxl')
     ga_table_path = "data/ga_original_data.csv"
     indicator = "Джерело"
 
