@@ -7,3 +7,4 @@ export_data/*
 !export_data/.gitkeep
 __pycache__
 .DS_Store
+.env
