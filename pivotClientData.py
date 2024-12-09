@@ -35,8 +35,9 @@ def pivot_client_data():
 
     # добавление колонки "источник"
     # Чтение таблиц
-    df1 = pd.read_csv("data/client_data.csv")  # Первая таблица
+    # df1 = pd.read_csv("data/client_data.csv")  # Первая таблица
    ##
+    df1 = pd.read_excel(file_path, engine='openpyxl')
     ga_table_path = "data/ga_original_data.csv"
     indicator = "Джерело"
 
