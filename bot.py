@@ -120,5 +120,5 @@ def main_bot():
     app.run_polling()
 
 
-# if __name__ == "__main__":
-#     main_bot()
+if __name__ == "__main__":
+    main_bot()

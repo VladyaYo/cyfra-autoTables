@@ -42,5 +42,5 @@ async def main():
     merge_table = await asyncio.to_thread(merge_all_data_wrapper)
     print(f"Соединение финальной таблицы завершено: {merge_table}")
 
-if __name__ == "__main__":
-     asyncio.run(main())
+# if __name__ == "__main__":
+#      asyncio.run(main())
