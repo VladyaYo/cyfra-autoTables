@@ -2,25 +2,20 @@ import pandas as pd
 
 def sort_category_analytic():
     # Шаг 1: Загрузка таблицы
-    # df = pd.read_csv("data/ads_data.csv")
-    df = pd.read_csv("data/ads_data.csv", skiprows=2)
-    # file_path = "data/ads_data.csv"
-    # indicator = "Кліки"
-    #
-    # # Чтение файла без указания заголовков
-    # input_df = pd.read_csv(file_path, header=None, encoding='utf-8')
-    #
-    # # Поиск строки с индикатором
-    # start_row = input_df.apply(lambda row: row.astype(str).str.contains(indicator).any(), axis=1).idxmax()
-    #
-    # # Чтение данных начиная с найденной строки
-    # # df = pd.read_csv(file_path, skiprows=start_row, encoding='utf-8')
-    # df = pd.read_csv(file_path, skiprows=2, encoding='utf-8')
+    df = pd.read_csv("data/ads_data.csv", skiprows=2)  # Пропускаем первые две строки, если они содержат ненужные заголовки
 
-    # Преобразуем столбцы с числовыми данными, удаляя запятые и преобразуя текст в числа
+    # Убираем пробелы в начале и в конце строковых значений
+    df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
+
+    # Преобразуем столбцы с числовыми данными, удаляя пробелы, заменяя неразрывные пробелы и запятую на точку
     for col in ['Кліки', 'Вартість', 'Конверсії', 'Цінність конв.']:
-        df[col] = pd.to_numeric(df[col].astype(str).str.replace(',', '.'), errors='coerce')
+        df[col] = df[col].astype(str) \
+            .str.replace('\xa0', ' ', regex=False)  # Заменяем неразрывные пробелы на обычные пробелы
+        df[col] = df[col].str.replace(' ', '', regex=False)  # Убираем все пробелы
+        df[col] = df[col].str.replace(',', '.', regex=False)  # Заменяем запятую на точку
+        df[col] = pd.to_numeric(df[col], errors='coerce')  # Преобразуем в числовой формат
 
+    # Преобразуем столбец 'Кліки' в целочисленный тип
     for col in ['Кліки']:
         if df[col].dtype != 'Int64':  # Проверка, чтобы не конвертировать уже преобразованные
             df[col] = pd.to_numeric(df[col], errors='coerce').astype('Int64')
@@ -184,28 +179,13 @@ def sort_category_analytic():
     # Шаг 3: Создаем таблицу с категориями
     result_df = pd.DataFrame()
 
-    filtered_indices = pd.Series([False] * len(df))  # Создаем булевый массив для отслеживания отфильтрованных строк
-
     for category, condition in categories.items():
         # Создаем копию отфильтрованных данных
         category_data = df[condition].copy()
         category_data['Категория'] = category  # Безопасно добавляем колонку
         result_df = pd.concat([result_df, category_data], ignore_index=True)
 
-    # for category, condition in categories.items():
-    #     # Фильтруем данные по каждой категории
-    #     category_data = df[condition]
-    #     category_data['Категория'] = category
-    #     # Добавляем колонку с названием категории
-    #     result_df = pd.concat([result_df, category_data], ignore_index=True)
-
-        # Добавляем строки, которые не прошли фильтрацию, как категорию "Прочее"
-        # other_data = df[~filtered_indices]  # Фильтруем строки, которые не были выбраны ни в одной из категорий
-        # other_data['Категория'] = 'Прочее'
-        # result_df = pd.concat([result_df, other_data], ignore_index=True)
-
-    # Группируем по категории и суммируем нужные столбцы
-    # Остальные столбцы, которые не нужно суммировать, будут игнорироваться в результате
+    # Шаг 4: Группируем по категории и суммируем нужные столбцы
     summed_result_df = result_df.groupby('Категория', as_index=False).agg({
         'Кліки': 'sum',
         'Вартість': 'sum',
@@ -213,8 +193,11 @@ def sort_category_analytic():
         'Цінність конв.': 'sum'
     })
 
-    # Шаг 4: Сохранение результата
+    # Шаг 5: Сохранение результата
     export_path = "export_data/categorized_table.csv"
     summed_result_df.to_csv(export_path, index=False)
+
+    # Выводим результаты
     print(summed_result_df)
+
     return export_path
