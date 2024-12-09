@@ -2,7 +2,7 @@ import os
 
 
 from dotenv import load_dotenv
-from telegram import Update
+from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
 from main import main  # Импорт вашей программы
@@ -28,6 +28,13 @@ REQUIRED_FILES = ["ads_data.csv", "ga_original_data.csv", "client_data.csv"]
 # Хранилище для файлов сессии
 user_files = {}
 
+async def send_welcome_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    keyboard = [['/start', '/cancel']]  # Кнопки
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)  # Уменьшаем размер клавиатуры
+    await update.message.reply_text(
+        "Выберите команду:",
+        reply_markup=reply_markup,
+    )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
