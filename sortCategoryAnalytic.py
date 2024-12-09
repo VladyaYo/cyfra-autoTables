@@ -1,8 +1,24 @@
 import pandas as pd
 
 def sort_category_analytic():
+    print(1)
     # Шаг 1: Загрузка таблицы
-    df = pd.read_csv("data/ads_data.csv", skiprows=2)  # Пропускаем первые две строки, если они содержат ненужные заголовки
+    # df = pd.read_csv("data/ads_data.csv", skiprows=2)  # Пропускаем первые две строки, если они содержат ненужные заголовки
+    # preview = pd.read_csv("data/ads_data.csv", nrows=50, header=None)  # Считываем первые строки для анализа
+    # header_row = preview.apply(lambda row: row.str.contains("Тип продукту (2-й рівень)", na=False)).any(axis=1).idxmax()  # Ищем индекс строки с "Кліки"
+    # print(header_row)
+    # # Шаг 2: Загрузка таблицы, пропуская строки до "Кліки"
+    # df = pd.read_csv("data/ads_data.csv", skiprows=header_row + 1 )  # Загружаем данные после заголовка
+    file_path = "data/ads_data.csv"
+
+    # Шаг 1: Найти первую строку с более чем 10 колонками
+    with open(file_path, "r", encoding="utf-8") as file:
+        for i, line in enumerate(file):
+            if len(line.split(",")) > 10:  # Предполагаем, что разделитель - запятая
+                header_row = i
+                break
+
+    df = pd.read_csv(file_path, skiprows=header_row)
 
     # Убираем пробелы в начале и в конце строковых значений
     df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
