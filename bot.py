@@ -21,7 +21,7 @@ EXPORT_FOLDER = "export_data/"
 os.makedirs(EXPORT_FOLDER, exist_ok=True)
 
 # Требуемые файлы
-REQUIRED_FILES = ["ads_data.csv", "ga_original_data.csv", "client_data.csv"]
+REQUIRED_FILES = ["ads_data.csv", "ga_original_data.csv", "client_data.xlsx"]
 
 # Хранилище для файлов сессии
 user_files = {}
