@@ -87,7 +87,7 @@ async def run_processing(files, update, context):
         # Получаем пути к файлам из переданных данных
         ads_data = files["ads_data.csv"]
         ga_original_data = files["ga_original_data.csv"]
-        client_data = files["client_data.csv"]
+        client_data = files["client_data.xlsx"]
 
         # Установка переменных окружения для main
         os.environ["ADS_DATA"] = ads_data

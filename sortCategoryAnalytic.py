@@ -1,7 +1,6 @@
 import pandas as pd
 
 def sort_category_analytic():
-    print(1)
     # Шаг 1: Загрузка таблицы
     # df = pd.read_csv("data/ads_data.csv", skiprows=2)  # Пропускаем первые две строки, если они содержат ненужные заголовки
     # preview = pd.read_csv("data/ads_data.csv", nrows=50, header=None)  # Считываем первые строки для анализа
