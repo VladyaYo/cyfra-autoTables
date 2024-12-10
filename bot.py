@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 from dotenv import load_dotenv
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
@@ -21,7 +22,7 @@ EXPORT_FOLDER = "export_data/"
 os.makedirs(EXPORT_FOLDER, exist_ok=True)
 
 # Требуемые файлы
-REQUIRED_FILES = ["ads_data.csv", "ga_original_data.csv", "client_data.csv"]
+REQUIRED_FILES = ["ads_data.csv", "ga_original_data.csv", "client_data.xlsx"]
 
 # Хранилище для файлов сессии
 user_files = {}
@@ -34,7 +35,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Привет! Отправь мне три CSV-файла с точными названиями:\n"
         "- ads_data.csv\n"
         "- ga_original_data.csv\n"
-        "- client_data.csv\n"
+        "- client_data.xlsx\n"
         "Чтобы сбросить процесс загрузки, используйте команду /cancel.",
         reply_markup=reply_markup
     )
@@ -87,7 +88,7 @@ async def run_processing(files, update, context):
         # Получаем пути к файлам из переданных данных
         ads_data = files["ads_data.csv"]
         ga_original_data = files["ga_original_data.csv"]
-        client_data = files["client_data.csv"]
+        client_data = files["client_data.xlsx"]
 
         # Установка переменных окружения для main
         os.environ["ADS_DATA"] = ads_data
@@ -99,8 +100,32 @@ async def run_processing(files, update, context):
 
         result_file = os.path.join(EXPORT_FOLDER, "final.csv")  # Итоговый файл
         await context.bot.send_document(chat_id=update.effective_chat.id, document=open(result_file, "rb"))
+    # except Exception as e:
+    #     await update.message.reply_text(f"Ошибка обработки: {e}")
+    #     print(e)
     except Exception as e:
-        await update.message.reply_text(f"Ошибка обработки: {e}")
+        # Пытаемся определить файл, который вызвал ошибку
+        problematic_file = None
+        for env_var, path in {
+            "ADS_DATA": os.getenv("ADS_DATA"),
+            "GA_ORIGINAL_DATA": os.getenv("GA_ORIGINAL_DATA"),
+            "CLIENT_DATA": os.getenv("CLIENT_DATA"),
+        }.items():
+            if path and os.path.exists(path):
+                try:
+                    if path.endswith(".csv"):
+                        pd.read_csv(path)  # Проверяем возможность чтения
+                    elif path.endswith(".xlsx"):
+                        pd.read_excel(path)  # Проверяем возможность чтения
+                except Exception:
+                    problematic_file = path
+                    break
+
+        # Формируем сообщение об ошибке
+        error_message = f"Ошибка обработки: {e}"
+        if problematic_file:
+            error_message += f"\nПроблемный файл: {problematic_file}"
+        await update.message.reply_text(error_message)
 
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):

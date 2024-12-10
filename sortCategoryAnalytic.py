@@ -17,20 +17,20 @@ def sort_category_analytic():
                 header_row = i
                 break
 
-    df = pd.read_csv(file_path, skiprows=header_row)
+    df = pd.read_csv(file_path, skiprows=header_row, quotechar='"', thousands=',', encoding='utf-8',delimiter=',', on_bad_lines='skip')
 
     # Убираем пробелы в начале и в конце строковых значений
     df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
 
     # Преобразуем столбцы с числовыми данными, удаляя пробелы, заменяя неразрывные пробелы и запятую на точку
-    for col in ['Кліки', 'Вартість', 'Конверсії', 'Цінність конв.']:
+    for col in ['Кліки', 'Вартість', 'Конверсії', 'Цінність конв.', 'CTR', 'Покази', 'Сер. ціна за клік', 'Вартість / конв.', 'Цінність конв./вартість', 'Цінність / конв.']:
         df[col] = df[col].astype(str) \
             .str.replace('\xa0', ' ', regex=False)  # Заменяем неразрывные пробелы на обычные пробелы
         df[col] = df[col].str.replace(' ', '', regex=False)  # Убираем все пробелы
         df[col] = df[col].str.replace(',', '.', regex=False)  # Заменяем запятую на точку
         df[col] = pd.to_numeric(df[col], errors='coerce')  # Преобразуем в числовой формат
 
-    # Преобразуем столбец 'Кліки' в целочисленный тип
+     # Преобразуем столбец 'Кліки' в целочисленный тип
     for col in ['Кліки']:
         if df[col].dtype != 'Int64':  # Проверка, чтобы не конвертировать уже преобразованные
             df[col] = pd.to_numeric(df[col], errors='coerce').astype('Int64')

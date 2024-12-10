@@ -1,25 +1,29 @@
 import os
 import asyncio
 
-from getMonth import get_user_number
 from sortCategoryAnalytic import sort_category_analytic
 from pivotClientData import pivot_client_data
 from clientDataCategoryFilter import client_data_category_filter
 from mergeAllData import merge_all_data
+from convertXlsxToCsv import convert_xlsx_to_csv
 
 async def main():
     # Создание таблиц
     print("Разбивка по категориям таблицы из google ads...")
-
     # Используем обертку для передачи параметров в функцию
     def sort_category_analytic_wrapper():
         return sort_category_analytic()
-
     table_category_analytic_path = await asyncio.to_thread(sort_category_analytic_wrapper)
     print(f"Таблица создана: {table_category_analytic_path}")
 
-    print("Сводим клиентскую таблицу...")
+    print("Конвернтируем клиентскую таблицу...")
+    def convert_xlsx_to_csv_wrapper():
+        return convert_xlsx_to_csv('data/client_data.xlsx', 'export_data/client_data.csv')
+    await asyncio.to_thread(convert_xlsx_to_csv_wrapper)
 
+    print("Клиентская таблица сконвертирована...")
+
+    print("Сводим клиентскую таблицу...")
     def pivot_client_data_wrapper():
         return pivot_client_data()
 
