@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+
 from dotenv import load_dotenv
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
@@ -27,6 +28,19 @@ REQUIRED_FILES = ["ads_data.csv", "ga_original_data.csv", "client_data.xlsx"]
 # Хранилище для файлов сессии
 user_files = {}
 
+
+def cleanup_files(folder_path):
+    """
+    Удаляет все файлы из указанной папки.
+
+    :param folder_path: Путь к папке для очистки.
+    """
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+        # Удаляем только файлы, пропуская .gitkeep
+        if file_name != ".gitkeep" and os.path.isfile(file_path):
+            os.remove(file_path)
+            print(f"Удален файл: {file_path}")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [['/start', '/cancel']]  # Клавиатура с кнопками
@@ -126,7 +140,10 @@ async def run_processing(files, update, context):
         if problematic_file:
             error_message += f"\nПроблемный файл: {problematic_file}"
         await update.message.reply_text(error_message)
-
+    finally:
+        # Удаление всех временных файлов
+        cleanup_files(DATA_FOLDER)
+        cleanup_files(EXPORT_FOLDER)
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id

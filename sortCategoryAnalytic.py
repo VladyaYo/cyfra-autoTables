@@ -17,7 +17,7 @@ def sort_category_analytic():
                 header_row = i
                 break
 
-    df = pd.read_csv(file_path, skiprows=header_row, quotechar='"', thousands=',', encoding='utf-8',delimiter=',', on_bad_lines='skip')
+    df = pd.read_csv(file_path, skiprows=header_row, quotechar='"', encoding='utf-8',delimiter=',', on_bad_lines='skip')
 
     # Убираем пробелы в начале и в конце строковых значений
     df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)

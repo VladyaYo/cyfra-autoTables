@@ -106,8 +106,8 @@ def client_data_category_filter():
 
     # df_res = pd.read_csv("export_data/filtered_client_sales.csv")
 
-    for col in ['Маржа ГРН', 'Сумма грн', 'Закупка ГРН']:
-        result_df[col] = result_df[col].astype(str).str.replace(',', '.').astype(float)
+    # for col in ['Маржа ГРН', 'Сумма грн', 'Закупка ГРН']:
+    #     result_df[col] = result_df[col].astype(str).str.replace(',', '.').astype(float)
 
     # Шаг 2: Обработка колонки "количество"
     # Преобразуем колонку "количество" в значения 1 или -1
