@@ -22,8 +22,13 @@ def convert_xlsx_to_csv(input_file, output_file, sheet_name=0):
     # Фильтруем и работаем с копией данных
     filtered_df = df[columns_to_keep].copy()
 
+    # Удаляем строки, где нет значения в колонке "Номер заказа на сайте"
+    filtered_df = filtered_df.dropna(subset=['Номер заказа на сайте'])
+
+    filtered_df['Номер заказа на сайте'] = filtered_df['Номер заказа на сайте'].astype(int)
+
 
     # Сохранение в компактный CSV
     filtered_df.to_csv(output_file, index=False, encoding='utf-8')
-    # print(f"Файл сохранен как {output_file}")
+
     return output_file
